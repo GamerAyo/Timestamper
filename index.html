@@ -5,45 +5,43 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#5865F2">
-<meta name="description" content="Advanced Discord Timestamp Generator">
+
 <title>Discord Timestamp Generator</title>
 
 <style>
-/* ============================================================
-   DISCORD TIMESTAMP GENERATOR
-   Advanced single-file application
-   ============================================================ */
+/* =========================================================
+   ADVANCED DISCORD TIMESTAMP GENERATOR
+   Version 2
+   No libraries. No APIs. Fully client-side.
+   ========================================================= */
 
 :root {
     --bg: #08090d;
-    --bg-2: #0d0f14;
+    --bg2: #0d0f14;
     --panel: #11141b;
-    --panel-2: #171a22;
-    --panel-3: #1d212b;
-    --border: #292e3a;
-    --border-hover: #3a4150;
+    --panel2: #171a22;
+    --panel3: #1d212b;
+    --border: #2a2f3a;
+    --border2: #3a4150;
 
     --text: #f2f3f5;
     --muted: #a7adb8;
     --subtle: #727987;
 
     --discord: #5865f2;
-    --discord-hover: #4752c4;
-    --discord-soft: rgba(88, 101, 242, .15);
+    --discord-dark: #4752c4;
 
     --green: #23a55a;
     --red: #ed4245;
     --yellow: #f0b232;
     --cyan: #00b0f4;
 
-    --shadow:
-        0 20px 60px rgba(0, 0, 0, .35),
-        0 4px 20px rgba(0, 0, 0, .25);
-
     --radius: 16px;
-    --radius-small: 10px;
+    --small-radius: 10px;
 
-    --transition: 160ms ease;
+    --shadow:
+        0 20px 60px rgba(0,0,0,.35),
+        0 4px 20px rgba(0,0,0,.25);
 }
 
 * {
@@ -57,14 +55,24 @@ html {
 body {
     margin: 0;
     min-height: 100vh;
+
     background:
-        radial-gradient(circle at 15% 10%, rgba(88,101,242,.10), transparent 30%),
-        radial-gradient(circle at 85% 20%, rgba(0,176,244,.05), transparent 28%),
+        radial-gradient(
+            circle at 15% 10%,
+            rgba(88,101,242,.13),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 85% 15%,
+            rgba(0,176,244,.05),
+            transparent 28%
+        ),
         var(--bg);
+
     color: var(--text);
+
     font-family:
         Inter,
-        ui-sans-serif,
         system-ui,
         -apple-system,
         BlinkMacSystemFont,
@@ -74,7 +82,8 @@ body {
 
 button,
 input,
-select {
+select,
+textarea {
     font: inherit;
 }
 
@@ -86,9 +95,9 @@ button {
     background: rgba(88,101,242,.35);
 }
 
-/* ============================================================
+/* =========================================================
    SCROLLBAR
-   ============================================================ */
+   ========================================================= */
 
 ::-webkit-scrollbar {
     width: 10px;
@@ -99,65 +108,79 @@ button {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #2b303c;
-    border-radius: 99px;
+    background: #2d3340;
+    border-radius: 100px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #3b4250;
+    background: #3b4352;
 }
 
-/* ============================================================
+/* =========================================================
    HEADER
-   ============================================================ */
+   ========================================================= */
 
 .header {
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 1000;
+
+    background: rgba(8,9,13,.82);
     backdrop-filter: blur(20px);
-    background: rgba(8,9,13,.78);
+
     border-bottom: 1px solid rgba(255,255,255,.05);
 }
 
 .header-inner {
     width: min(1400px, calc(100% - 32px));
-    margin: auto;
     min-height: 76px;
+
+    margin: auto;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     gap: 20px;
 }
 
 .brand {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 13px;
 }
 
-.brand-icon {
+.logo {
     width: 44px;
     height: 44px;
+
     border-radius: 13px;
+
     display: grid;
     place-items: center;
-    background: linear-gradient(135deg, #5865f2, #7289da);
-    box-shadow: 0 10px 30px rgba(88,101,242,.3);
+
+    background:
+        linear-gradient(
+            135deg,
+            #5865f2,
+            #7289da
+        );
+
+    box-shadow:
+        0 10px 30px rgba(88,101,242,.3);
+
     font-size: 22px;
-    font-weight: 900;
 }
 
-.brand-text h1 {
+.brand h1 {
     margin: 0;
-    font-size: 18px;
-    letter-spacing: -.3px;
+    font-size: 17px;
 }
 
-.brand-text p {
-    margin: 2px 0 0;
+.brand p {
+    margin: 3px 0 0;
     color: var(--muted);
-    font-size: 12px;
+    font-size: 11px;
 }
 
 .header-actions {
@@ -165,156 +188,241 @@ button {
     gap: 8px;
 }
 
-/* ============================================================
+/* =========================================================
    BUTTONS
-   ============================================================ */
+   ========================================================= */
 
 .btn {
     border: 1px solid var(--border);
-    background: var(--panel-2);
+
+    background: var(--panel2);
     color: var(--text);
+
     border-radius: 10px;
+
     padding: 9px 13px;
-    transition:
-        background var(--transition),
-        border-color var(--transition),
-        transform var(--transition);
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
     gap: 7px;
-    white-space: nowrap;
+
+    transition:
+        background .15s ease,
+        border-color .15s ease,
+        transform .15s ease;
 }
 
 .btn:hover {
-    background: var(--panel-3);
-    border-color: var(--border-hover);
+    background: var(--panel3);
+    border-color: var(--border2);
 }
 
 .btn:active {
     transform: translateY(1px);
 }
 
-.btn-primary {
-    border-color: transparent;
+.btn.primary {
     background: var(--discord);
+    border-color: var(--discord);
     color: white;
 }
 
-.btn-primary:hover {
-    background: var(--discord-hover);
+.btn.primary:hover {
+    background: var(--discord-dark);
+    border-color: var(--discord-dark);
 }
 
-.btn-danger {
-    color: #ffb0b0;
-}
-
-.btn-danger:hover {
-    background: rgba(237,66,69,.1);
-    border-color: rgba(237,66,69,.35);
-}
-
-.btn-small {
+.btn.small {
     padding: 7px 10px;
-    font-size: 12px;
+    font-size: 11px;
 }
 
-/* ============================================================
-   MAIN LAYOUT
-   ============================================================ */
+/* =========================================================
+   MAIN
+   ========================================================= */
 
 .container {
     width: min(1400px, calc(100% - 32px));
-    margin: 0 auto;
-    padding: 32px 0 70px;
+
+    margin: auto;
+
+    padding:
+        35px 0 70px;
 }
 
 .hero {
-    margin-bottom: 26px;
+    margin-bottom: 25px;
 }
 
 .hero h2 {
-    margin: 0 0 8px;
-    font-size: clamp(27px, 4vw, 42px);
-    letter-spacing: -1.3px;
+    margin: 0 0 9px;
+
+    font-size:
+        clamp(28px, 4vw, 43px);
+
     line-height: 1.05;
+
+    letter-spacing: -1.5px;
 }
 
 .hero p {
+    max-width: 800px;
+
     margin: 0;
+
     color: var(--muted);
-    max-width: 760px;
+
     line-height: 1.6;
 }
 
-/* ============================================================
-   GRID
-   ============================================================ */
+/* =========================================================
+   LAYOUT
+   ========================================================= */
 
-.app-grid {
+.layout {
     display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(330px, .75fr);
+
+    grid-template-columns:
+        minmax(0, 1.35fr)
+        minmax(350px, .75fr);
+
     gap: 18px;
+
     align-items: start;
 }
 
-.left-column,
-.right-column {
+.column {
     display: grid;
     gap: 18px;
 }
 
+/* =========================================================
+   CARDS
+   ========================================================= */
+
 .card {
     background:
-        linear-gradient(180deg, rgba(255,255,255,.018), transparent),
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.018),
+            transparent
+        ),
         var(--panel);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    overflow: hidden;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        var(--radius);
+
+    box-shadow:
+        var(--shadow);
+
+    overflow:
+        hidden;
 }
 
 .card-header {
     padding: 18px 20px;
-    border-bottom: 1px solid var(--border);
+
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+
     gap: 15px;
+
+    border-bottom:
+        1px solid var(--border);
 }
 
 .card-title {
     margin: 0;
+
     font-size: 15px;
-    font-weight: 750;
+    font-weight: 800;
 }
 
-.card-description {
+.card-subtitle {
+    margin-top: 4px;
+
     color: var(--muted);
-    font-size: 12px;
-    margin-top: 3px;
+
+    font-size: 11px;
 }
 
 .card-body {
     padding: 20px;
 }
 
-/* ============================================================
-   INPUTS
-   ============================================================ */
+/* =========================================================
+   TABS
+   ========================================================= */
 
-.field-grid {
+.tabs {
+    display: flex;
+    gap: 6px;
+
+    padding: 5px;
+
+    background: #0a0c11;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 12px;
+}
+
+.tab {
+    flex: 1;
+
+    border: 0;
+
+    padding: 10px;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: var(--muted);
+
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.tab:hover {
+    background: rgba(255,255,255,.04);
+    color: var(--text);
+}
+
+.tab.active {
+    background:
+        rgba(88,101,242,.17);
+
+    color: white;
+
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(88,101,242,.2);
+}
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    grid-template-columns:
+        repeat(2, minmax(0,1fr));
+
     gap: 15px;
 }
 
-.field-grid.three {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.field {
-    min-width: 0;
+.grid.three {
+    grid-template-columns:
+        repeat(3, minmax(0,1fr));
 }
 
 .field.full {
@@ -323,122 +431,127 @@ button {
 
 label {
     display: block;
+
     margin-bottom: 7px;
+
+    color: #cdd0d6;
+
     font-size: 12px;
-    font-weight: 700;
-    color: #c9cdd5;
+    font-weight: 750;
 }
 
 input,
-select {
+select,
+textarea {
     width: 100%;
-    border: 1px solid var(--border);
+
     outline: none;
-    border-radius: 10px;
-    padding: 11px 12px;
-    color: var(--text);
-    background: #0c0e13;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        var(--small-radius);
+
+    background:
+        #0b0e13;
+
+    color:
+        var(--text);
+
+    padding:
+        11px 12px;
+
     transition:
-        border-color var(--transition),
-        box-shadow var(--transition),
-        background var(--transition);
+        border-color .15s ease,
+        box-shadow .15s ease;
 }
 
 input:hover,
-select:hover {
-    border-color: var(--border-hover);
+select:hover,
+textarea:hover {
+    border-color:
+        var(--border2);
 }
 
 input:focus,
-select:focus {
-    border-color: var(--discord);
-    box-shadow: 0 0 0 3px rgba(88,101,242,.12);
+select:focus,
+textarea:focus {
+    border-color:
+        var(--discord);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(88,101,242,.13);
 }
 
 input[type="datetime-local"] {
     color-scheme: dark;
 }
 
-input[type="number"] {
-    appearance: textfield;
+.help {
+    margin-top: 6px;
+
+    color:
+        var(--subtle);
+
+    font-size: 10px;
+
+    line-height:
+        1.5;
 }
 
-.input-with-button {
+.input-row {
     display: flex;
-    gap: 7px;
+    gap: 8px;
 }
 
-.input-with-button input {
+.input-row input {
     min-width: 0;
 }
 
-.help {
-    margin-top: 6px;
-    color: var(--subtle);
-    font-size: 11px;
-    line-height: 1.45;
-}
-
-/* ============================================================
-   MODE TABS
-   ============================================================ */
-
-.tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 7px;
-    padding: 5px;
-    border-radius: 12px;
-    background: #0b0d12;
-    border: 1px solid var(--border);
-}
-
-.tab {
-    flex: 1;
-    min-width: 100px;
-    border: 0;
-    border-radius: 8px;
-    background: transparent;
-    color: var(--muted);
-    padding: 9px 12px;
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.tab:hover {
-    color: var(--text);
-    background: rgba(255,255,255,.04);
-}
-
-.tab.active {
-    background: var(--discord-soft);
-    color: white;
-    box-shadow: inset 0 0 0 1px rgba(88,101,242,.2);
-}
-
-/* ============================================================
-   QUICK PRESETS
-   ============================================================ */
+/* =========================================================
+   PRESETS
+   ========================================================= */
 
 .preset-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0,1fr));
+
+    grid-template-columns:
+        repeat(3, minmax(0,1fr));
+
     gap: 8px;
 }
 
 .preset {
-    border: 1px solid var(--border);
-    background: #0d1016;
-    border-radius: 10px;
-    padding: 11px;
-    text-align: left;
-    color: var(--text);
-    transition: all var(--transition);
+    border:
+        1px solid var(--border);
+
+    background:
+        #0d1016;
+
+    color:
+        var(--text);
+
+    text-align:
+        left;
+
+    border-radius:
+        10px;
+
+    padding:
+        11px;
+
+    transition:
+        .15s ease;
 }
 
 .preset:hover {
-    border-color: var(--discord);
-    background: rgba(88,101,242,.08);
+    border-color:
+        var(--discord);
+
+    background:
+        rgba(88,101,242,.08);
 }
 
 .preset strong {
@@ -448,551 +561,806 @@ input[type="number"] {
 
 .preset span {
     display: block;
+
     margin-top: 3px;
-    font-size: 10px;
+
     color: var(--muted);
+
+    font-size: 10px;
 }
 
-/* ============================================================
+/* =========================================================
    PREVIEW
-   ============================================================ */
+   ========================================================= */
 
 .discord-preview {
-    background: #313338;
-    border-radius: 12px;
-    border: 1px solid #202226;
     overflow: hidden;
+
+    border:
+        1px solid #202226;
+
+    border-radius:
+        12px;
+
+    background:
+        #313338;
 }
 
-.discord-topbar {
+.discord-bar {
     height: 36px;
+
+    padding:
+        0 13px;
+
     display: flex;
     align-items: center;
-    padding: 0 13px;
-    background: #2b2d31;
-    color: #b5bac1;
+
+    background:
+        #2b2d31;
+
+    color:
+        #dbdee1;
+
     font-size: 11px;
-    border-bottom: 1px solid rgba(0,0,0,.25);
+
+    border-bottom:
+        1px solid rgba(0,0,0,.3);
 }
 
-.discord-channel {
-    font-weight: 800;
-    color: #dbdee1;
-}
-
-.discord-message {
-    padding: 18px;
-    min-height: 150px;
-}
-
-.fake-message {
+.message {
     display: flex;
+
     gap: 12px;
+
+    padding: 20px;
+
+    min-height: 155px;
 }
 
-.fake-avatar {
+.avatar {
     width: 40px;
     height: 40px;
+
     flex: 0 0 auto;
-    border-radius: 50%;
+
     display: grid;
     place-items: center;
-    background: linear-gradient(135deg, #5865f2, #eb459e);
-    font-size: 18px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #5865f2,
+            #eb459e
+        );
+
     font-weight: 900;
 }
 
-.fake-name {
+.username {
     color: white;
+
     font-size: 13px;
-    font-weight: 700;
-}
-
-.fake-time {
-    color: #949ba4;
-    font-size: 10px;
-    margin-left: 5px;
-}
-
-.fake-content {
-    margin-top: 5px;
-    color: #dbdee1;
-    line-height: 1.6;
-    font-size: 14px;
-}
-
-.timestamp-highlight {
-    color: #00aff4;
-    background: rgba(0,176,244,.08);
-    border-radius: 3px;
-    padding: 1px 3px;
-    cursor: help;
-}
-
-/* ============================================================
-   CODE BOX
-   ============================================================ */
-
-.code-box {
-    position: relative;
-    border: 1px solid var(--border);
-    background: #080a0e;
-    border-radius: 11px;
-    overflow: hidden;
-}
-
-.code-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 9px 11px;
-    border-bottom: 1px solid var(--border);
-    background: rgba(255,255,255,.02);
-}
-
-.code-header span {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: .7px;
-    color: var(--subtle);
     font-weight: 800;
 }
 
+.msg-time {
+    margin-left: 5px;
+
+    color: #949ba4;
+
+    font-size: 10px;
+}
+
+.message-content {
+    margin-top: 6px;
+
+    color:
+        #dbdee1;
+
+    font-size:
+        14px;
+
+    line-height:
+        1.6;
+}
+
+.timestamp-preview {
+    color:
+        #00aff4;
+
+    background:
+        rgba(0,176,244,.08);
+
+    padding:
+        1px 4px;
+
+    border-radius:
+        3px;
+}
+
+/* =========================================================
+   CODE
+   ========================================================= */
+
+.code {
+    overflow: hidden;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        11px;
+
+    background:
+        #080a0e;
+}
+
+.code-head {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding:
+        9px 11px;
+
+    border-bottom:
+        1px solid var(--border);
+}
+
+.code-head span {
+    color:
+        var(--subtle);
+
+    font-size:
+        10px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        .7px;
+
+    text-transform:
+        uppercase;
+}
+
 .code-content {
-    padding: 14px;
-    overflow-x: auto;
+    padding:
+        14px;
+
+    overflow:
+        auto;
+}
+
+code {
+    font-family:
+        "Cascadia Code",
+        "Fira Code",
+        Consolas,
+        monospace;
 }
 
 .code-content code {
-    color: #d7dae0;
-    font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
-    font-size: 13px;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
+    font-size:
+        13px;
+
+    color:
+        #e3e5e8;
+
+    overflow-wrap:
+        anywhere;
 }
 
-/* ============================================================
-   RESULT ROW
-   ============================================================ */
-
-.result-list {
-    display: grid;
-    gap: 8px;
-}
-
-.result-row {
-    display: grid;
-    grid-template-columns: 110px minmax(0,1fr) auto;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    background: #0c0f14;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-}
-
-.result-label {
-    font-size: 11px;
-    color: var(--muted);
-    font-weight: 700;
-}
-
-.result-value {
-    min-width: 0;
-    font-family: "Cascadia Code", Consolas, monospace;
-    font-size: 12px;
-    color: #e4e7eb;
-    overflow-wrap: anywhere;
-}
-
-/* ============================================================
-   STAT CARDS
-   ============================================================ */
+/* =========================================================
+   STATS
+   ========================================================= */
 
 .stats {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0,1fr));
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
     gap: 8px;
 }
 
 .stat {
-    border: 1px solid var(--border);
-    background: #0c0f14;
-    border-radius: 10px;
-    padding: 11px;
+    padding:
+        11px;
+
+    background:
+        #0c0f14;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        10px;
 }
 
 .stat-label {
-    color: var(--subtle);
-    font-size: 10px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: .6px;
+    color:
+        var(--subtle);
+
+    font-size:
+        9px;
+
+    font-weight:
+        850;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        .6px;
 }
 
 .stat-value {
-    margin-top: 5px;
-    font-size: 14px;
-    font-weight: 800;
-    overflow-wrap: anywhere;
+    margin-top:
+        5px;
+
+    font-size:
+        13px;
+
+    font-weight:
+        800;
+
+    overflow-wrap:
+        anywhere;
 }
 
-/* ============================================================
-   BADGES
-   ============================================================ */
+/* =========================================================
+   RESULT LIST
+   ========================================================= */
 
-.badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    border-radius: 999px;
-    padding: 5px 8px;
-    font-size: 10px;
-    font-weight: 800;
-}
-
-.badge-green {
-    background: rgba(35,165,90,.12);
-    color: #54e38e;
-}
-
-.badge-blue {
-    background: rgba(88,101,242,.13);
-    color: #aeb5ff;
-}
-
-.badge-yellow {
-    background: rgba(240,178,50,.12);
-    color: #ffd479;
-}
-
-/* ============================================================
-   BATCH GENERATOR
-   ============================================================ */
-
-.batch-input {
-    width: 100%;
-    min-height: 120px;
-    resize: vertical;
-    border: 1px solid var(--border);
-    outline: none;
-    border-radius: 10px;
-    padding: 12px;
-    background: #0b0d12;
-    color: var(--text);
-    font-family: "Cascadia Code", Consolas, monospace;
-    font-size: 12px;
-}
-
-.batch-input:focus {
-    border-color: var(--discord);
-    box-shadow: 0 0 0 3px rgba(88,101,242,.12);
-}
-
-.batch-output {
+.results {
     display: grid;
-    gap: 6px;
-    margin-top: 12px;
-    max-height: 400px;
-    overflow: auto;
+    gap: 8px;
 }
 
-.batch-item {
-    display: flex;
-    justify-content: space-between;
+.result {
+    display: grid;
+
+    grid-template-columns:
+        115px minmax(0,1fr) auto;
+
     align-items: center;
+
     gap: 10px;
-    border: 1px solid var(--border);
-    background: #0b0d12;
-    padding: 9px;
-    border-radius: 9px;
+
+    padding:
+        10px;
+
+    background:
+        #0c0f14;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        10px;
 }
 
-.batch-item code {
-    min-width: 0;
-    font-size: 11px;
-    color: #d7dae0;
-    overflow-wrap: anywhere;
+.result-label {
+    color:
+        var(--muted);
+
+    font-size:
+        10px;
+
+    font-weight:
+        800;
 }
 
-/* ============================================================
-   CHECKBOXES / TOGGLES
-   ============================================================ */
+.result-value {
+    min-width:
+        0;
 
-.toggle-row {
+    color:
+        #e4e7eb;
+
+    font-family:
+        "Cascadia Code",
+        Consolas,
+        monospace;
+
+    font-size:
+        11px;
+
+    overflow-wrap:
+        anywhere;
+}
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.status {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding:
+        5px 9px;
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(35,165,90,.12);
+
+    color:
+        #5ce894;
+
+    font-size:
+        10px;
+
+    font-weight:
+        850;
+}
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+
+    border-radius:
+        50%;
+
+    background:
+        currentColor;
+}
+
+/* =========================================================
+   TOGGLES
+   ========================================================= */
+
+.option {
     display: flex;
+
     align-items: center;
     justify-content: space-between;
+
     gap: 15px;
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(255,255,255,.05);
+
+    padding:
+        13px 0;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.05);
 }
 
-.toggle-row:last-child {
-    border-bottom: 0;
+.option:last-child {
+    border-bottom:
+        0;
 }
 
-.toggle-text strong {
-    display: block;
-    font-size: 12px;
+.option-title {
+    font-size:
+        12px;
+
+    font-weight:
+        800;
 }
 
-.toggle-text span {
-    display: block;
-    margin-top: 3px;
-    color: var(--muted);
-    font-size: 10px;
+.option-desc {
+    margin-top:
+        3px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        10px;
 }
 
 .switch {
-    position: relative;
-    width: 40px;
-    height: 22px;
-    flex: 0 0 auto;
+    position:
+        relative;
+
+    width:
+        42px;
+
+    height:
+        23px;
+
+    flex:
+        0 0 auto;
 }
 
 .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+    opacity:
+        0;
+
+    width:
+        0;
+
+    height:
+        0;
 }
 
 .slider {
-    position: absolute;
-    inset: 0;
-    background: #2c313a;
-    border-radius: 99px;
-    cursor: pointer;
-    transition: .2s;
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    background:
+        #2c313a;
+
+    border-radius:
+        999px;
+
+    transition:
+        .2s;
 }
 
 .slider::before {
-    content: "";
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    left: 3px;
-    top: 3px;
-    background: white;
-    border-radius: 50%;
-    transition: .2s;
+    content:
+        "";
+
+    position:
+        absolute;
+
+    width:
+        17px;
+
+    height:
+        17px;
+
+    left:
+        3px;
+
+    top:
+        3px;
+
+    background:
+        white;
+
+    border-radius:
+        50%;
+
+    transition:
+        .2s;
 }
 
 .switch input:checked + .slider {
-    background: var(--discord);
+    background:
+        var(--discord);
 }
 
 .switch input:checked + .slider::before {
-    transform: translateX(18px);
+    transform:
+        translateX(19px);
 }
 
-/* ============================================================
+/* =========================================================
+   BATCH
+   ========================================================= */
+
+textarea {
+    min-height:
+        135px;
+
+    resize:
+        vertical;
+
+    font-family:
+        "Cascadia Code",
+        Consolas,
+        monospace;
+
+    font-size:
+        11px;
+
+    line-height:
+        1.6;
+}
+
+.batch-output {
+    margin-top:
+        12px;
+
+    display:
+        grid;
+
+    gap:
+        6px;
+
+    max-height:
+        400px;
+
+    overflow:
+        auto;
+}
+
+.batch-row {
+    display:
+        flex;
+
+    align-items:
+        center;
+    justify-content:
+        space-between;
+
+    gap:
+        10px;
+
+    padding:
+        9px;
+
+    background:
+        #0b0d12;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        9px;
+}
+
+.batch-row code {
+    min-width:
+        0;
+
+    overflow-wrap:
+        anywhere;
+
+    font-size:
+        11px;
+}
+
+/* =========================================================
    FOOTER
-   ============================================================ */
+   ========================================================= */
 
 .footer {
-    margin-top: 25px;
-    text-align: center;
-    color: var(--subtle);
-    font-size: 11px;
-    line-height: 1.6;
+    margin-top:
+        25px;
+
+    text-align:
+        center;
+
+    color:
+        var(--subtle);
+
+    font-size:
+        10px;
+
+    line-height:
+        1.7;
 }
 
-.footer strong {
-    color: #9da3af;
-}
-
-/* ============================================================
+/* =========================================================
    TOAST
-   ============================================================ */
+   ========================================================= */
 
 .toast-container {
-    position: fixed;
-    right: 18px;
-    bottom: 18px;
-    z-index: 9999;
-    display: grid;
-    gap: 8px;
-    pointer-events: none;
+    position:
+        fixed;
+
+    right:
+        18px;
+
+    bottom:
+        18px;
+
+    z-index:
+        99999;
+
+    display:
+        grid;
+
+    gap:
+        8px;
 }
 
 .toast {
-    min-width: 230px;
-    max-width: 380px;
-    padding: 12px 14px;
-    border: 1px solid var(--border);
-    border-radius: 11px;
-    background: #151820;
-    box-shadow: 0 15px 40px rgba(0,0,0,.4);
-    animation: toastIn .22s ease;
-    font-size: 12px;
+    max-width:
+        380px;
+
+    padding:
+        12px 14px;
+
+    background:
+        #151820;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        11px;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.4);
+
+    font-size:
+        12px;
+
+    animation:
+        toastIn .2s ease;
 }
 
 .toast.success {
-    border-color: rgba(35,165,90,.35);
+    border-color:
+        rgba(35,165,90,.4);
 }
 
 .toast.error {
-    border-color: rgba(237,66,69,.35);
+    border-color:
+        rgba(237,66,69,.45);
 }
 
 @keyframes toastIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(8px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
-/* ============================================================
-   MOBILE
-   ============================================================ */
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
 
 @media (max-width: 1050px) {
-    .app-grid {
-        grid-template-columns: 1fr;
+
+    .layout {
+        grid-template-columns:
+            1fr;
     }
 
-    .right-column {
-        grid-template-columns: repeat(2, minmax(0,1fr));
-        align-items: start;
-    }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 700px) {
+
     .container,
     .header-inner {
-        width: min(100% - 20px, 1400px);
+        width:
+            calc(100% - 20px);
     }
 
-    .header-inner {
-        min-height: 68px;
+    .grid,
+    .grid.three,
+    .preset-grid,
+    .stats {
+        grid-template-columns:
+            1fr;
     }
 
-    .brand-text p {
-        display: none;
+    .result {
+        grid-template-columns:
+            1fr;
+    }
+
+    .brand p {
+        display:
+            none;
     }
 
     .header-actions .btn span {
-        display: none;
+        display:
+            none;
     }
 
-    .field-grid,
-    .field-grid.three,
-    .preset-grid,
-    .stats,
-    .right-column {
-        grid-template-columns: 1fr;
-    }
-
-    .result-row {
-        grid-template-columns: 1fr;
-    }
-
-    .hero h2 {
-        font-size: 30px;
-    }
 }
 
-/* ============================================================
-   REDUCED MOTION
-   ============================================================ */
-
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        scroll-behavior: auto !important;
-        transition: none !important;
-        animation: none !important;
-    }
+[hidden] {
+    display: none !important;
 }
 </style>
 </head>
 
 <body>
 
-<!-- ==========================================================
-     HEADER
-     ========================================================== -->
-
 <header class="header">
+
     <div class="header-inner">
 
         <div class="brand">
-            <div class="brand-icon">⌚</div>
 
-            <div class="brand-text">
-                <h1>Discord Timestamp Generator</h1>
-                <p>Advanced • Accurate • Client-side</p>
+            <div class="logo">
+                ⌚
             </div>
+
+            <div>
+                <h1>
+                    Discord Timestamp Generator
+                </h1>
+
+                <p>
+                    Advanced Unix timestamp builder
+                </p>
+            </div>
+
         </div>
 
         <div class="header-actions">
-            <button class="btn btn-small" id="nowButton">
-                ⏱ <span>Use Current Time</span>
+
+            <button
+                class="btn small"
+                id="nowBtn">
+                ⏱ <span>Now</span>
             </button>
 
-            <button class="btn btn-small" id="resetButton">
+            <button
+                class="btn small"
+                id="resetBtn">
                 ↺ <span>Reset</span>
             </button>
+
         </div>
 
     </div>
+
 </header>
 
-
-<!-- ==========================================================
-     MAIN
-     ========================================================== -->
 
 <main class="container">
 
     <section class="hero">
-        <h2>Build Discord timestamps.</h2>
+
+        <h2>
+            Build perfect Discord timestamps.
+        </h2>
+
         <p>
-            Generate Discord-compatible timestamp tags, preview every display
-            style, convert Unix time, work with time zones, and copy everything
-            with one click.
+            Select a date, enter Unix time, choose a Discord display
+            format, or use a preset. The generator keeps one real Unix
+            timestamp internally so every output stays synchronized.
         </p>
+
     </section>
 
 
-    <div class="app-grid">
+    <div class="layout">
 
-        <!-- ==================================================
-             LEFT COLUMN
-             ================================================== -->
+        <!-- =================================================
+             LEFT
+             ================================================= -->
 
-        <div class="left-column">
+        <div class="column">
 
-            <!-- DATE/TIME CARD -->
+            <!-- INPUT CARD -->
+
             <section class="card">
 
                 <div class="card-header">
+
                     <div>
-                        <h3 class="card-title">Timestamp Input</h3>
-                        <div class="card-description">
-                            Choose exactly what moment Discord should display.
+                        <h3 class="card-title">
+                            Timestamp Input
+                        </h3>
+
+                        <div class="card-subtitle">
+                            Choose how you want to create the timestamp.
                         </div>
                     </div>
 
-                    <span class="badge badge-green">
-                        ● LIVE
-                    </span>
+                    <div class="status">
+                        <span class="status-dot"></span>
+                        ENGINE READY
+                    </div>
+
                 </div>
+
 
                 <div class="card-body">
 
-                    <div class="tabs" id="inputTabs">
+                    <div class="tabs">
 
                         <button
                             class="tab active"
-                            data-mode="datetime">
+                            data-mode="date">
                             Date & Time
                         </button>
 
@@ -1004,35 +1372,53 @@ input[type="number"] {
 
                     </div>
 
+
                     <div style="height:16px"></div>
+
 
                     <!-- DATE MODE -->
 
-                    <div id="datetimeMode">
+                    <div id="datePanel">
 
-                        <div class="field-grid">
+                        <div class="grid">
 
                             <div class="field">
-                                <label for="dateInput">Date</label>
+
+                                <label>
+                                    Date
+                                </label>
+
                                 <input
-                                    id="dateInput"
-                                    type="date">
+                                    type="date"
+                                    id="dateInput">
+
                             </div>
 
+
                             <div class="field">
-                                <label for="timeInput">Time</label>
+
+                                <label>
+                                    Time
+                                </label>
+
                                 <input
-                                    id="timeInput"
                                     type="time"
+                                    id="timeInput"
                                     step="1">
+
                             </div>
 
+
                             <div class="field">
-                                <label for="timezoneInput">Timezone</label>
+
+                                <label>
+                                    Timezone
+                                </label>
 
                                 <select id="timezoneInput">
+
                                     <option value="local">
-                                        Local timezone
+                                        Browser Local Timezone
                                     </option>
 
                                     <option value="UTC">
@@ -1082,29 +1468,33 @@ input[type="number"] {
                                     <option value="Australia/Sydney">
                                         Australia/Sydney
                                     </option>
+
                                 </select>
 
-                                <div class="help">
-                                    The generated Discord timestamp is an
-                                    absolute Unix timestamp, so Discord will
-                                    display it according to each viewer's
-                                    locale/timezone.
-                                </div>
                             </div>
 
+
                             <div class="field">
-                                <label for="secondsInput">
+
+                                <label>
                                     Seconds
                                 </label>
 
                                 <input
-                                    id="secondsInput"
                                     type="number"
+                                    id="secondsInput"
                                     min="0"
                                     max="59"
                                     value="0">
+
                             </div>
 
+                        </div>
+
+
+                        <div class="help">
+                            Changing any field immediately recalculates
+                            the Unix timestamp.
                         </div>
 
                     </div>
@@ -1112,36 +1502,42 @@ input[type="number"] {
 
                     <!-- UNIX MODE -->
 
-                    <div id="unixMode" hidden>
+                    <div id="unixPanel" hidden>
 
                         <div class="field">
-                            <label for="unixInput">
-                                Unix timestamp
+
+                            <label>
+                                Unix Timestamp
                             </label>
 
-                            <div class="input-with-button">
+                            <div class="input-row">
+
                                 <input
                                     id="unixInput"
                                     type="text"
                                     inputmode="numeric"
-                                    placeholder="1758931200">
+                                    placeholder="1790812800">
 
                                 <button
-                                    class="btn btn-primary"
-                                    id="unixApplyButton">
+                                    class="btn primary"
+                                    id="applyUnixBtn">
                                     Apply
                                 </button>
+
                             </div>
 
                             <div class="help">
-                                Enter Unix seconds. Millisecond values are
-                                automatically detected and converted.
+                                Discord uses Unix time in seconds.
+                                13-digit millisecond timestamps are
+                                automatically converted.
                             </div>
+
                         </div>
 
                     </div>
 
                 </div>
+
             </section>
 
 
@@ -1150,137 +1546,212 @@ input[type="number"] {
             <section class="card">
 
                 <div class="card-header">
+
                     <div>
-                        <h3 class="card-title">Quick Presets</h3>
-                        <div class="card-description">
-                            Instantly jump to common timestamp moments.
+                        <h3 class="card-title">
+                            Quick Presets
+                        </h3>
+
+                        <div class="card-subtitle">
+                            Presets use the exact same timestamp engine.
                         </div>
                     </div>
+
                 </div>
+
 
                 <div class="card-body">
 
                     <div class="preset-grid">
 
-                        <button class="preset" data-preset="now">
-                            <strong>Now</strong>
-                            <span>Current moment</span>
+                        <button
+                            class="preset"
+                            data-preset="now">
+
+                            <strong>
+                                Now
+                            </strong>
+
+                            <span>
+                                Current instant
+                            </span>
+
                         </button>
 
-                        <button class="preset" data-preset="plus1h">
-                            <strong>+1 Hour</strong>
-                            <span>One hour from now</span>
+
+                        <button
+                            class="preset"
+                            data-preset="hour">
+
+                            <strong>
+                                +1 Hour
+                            </strong>
+
+                            <span>
+                                One hour ahead
+                            </span>
+
                         </button>
 
-                        <button class="preset" data-preset="plus1d">
-                            <strong>+1 Day</strong>
-                            <span>Tomorrow</span>
+
+                        <button
+                            class="preset"
+                            data-preset="day">
+
+                            <strong>
+                                +1 Day
+                            </strong>
+
+                            <span>
+                                Tomorrow
+                            </span>
+
                         </button>
 
-                        <button class="preset" data-preset="plus7d">
-                            <strong>+7 Days</strong>
-                            <span>One week ahead</span>
+
+                        <button
+                            class="preset"
+                            data-preset="week">
+
+                            <strong>
+                                +7 Days
+                            </strong>
+
+                            <span>
+                                One week ahead
+                            </span>
+
                         </button>
 
-                        <button class="preset" data-preset="plus30d">
-                            <strong>+30 Days</strong>
-                            <span>Thirty days ahead</span>
+
+                        <button
+                            class="preset"
+                            data-preset="month">
+
+                            <strong>
+                                +30 Days
+                            </strong>
+
+                            <span>
+                                Thirty days ahead
+                            </span>
+
                         </button>
 
-                        <button class="preset" data-preset="newyear">
-                            <strong>Next New Year</strong>
-                            <span>January 1st</span>
+
+                        <button
+                            class="preset"
+                            data-preset="newyear">
+
+                            <strong>
+                                New Year
+                            </strong>
+
+                            <span>
+                                Next January 1
+                            </span>
+
                         </button>
 
                     </div>
 
                 </div>
+
             </section>
 
 
-            <!-- DISCORD PREVIEW -->
+            <!-- PREVIEW -->
 
             <section class="card">
 
                 <div class="card-header">
 
                     <div>
-                        <h3 class="card-title">Discord Preview</h3>
-                        <div class="card-description">
-                            Approximate rendering of your timestamp.
+                        <h3 class="card-title">
+                            Discord Preview
+                        </h3>
+
+                        <div class="card-subtitle">
+                            This simulates the selected Discord style.
                         </div>
                     </div>
 
-                    <select id="styleSelect" style="max-width:230px">
+
+                    <select
+                        id="styleSelect"
+                        style="max-width:220px">
 
                         <option value="t">
-                            Short Time
+                            t — Short Time
                         </option>
 
                         <option value="T">
-                            Long Time
+                            T — Long Time
                         </option>
 
                         <option value="d">
-                            Short Date
+                            d — Short Date
                         </option>
 
                         <option value="D">
-                            Long Date
+                            D — Long Date
                         </option>
 
                         <option value="f" selected>
-                            Short Date/Time
+                            f — Short Date/Time
                         </option>
 
                         <option value="F">
-                            Long Date/Time
+                            F — Long Date/Time
                         </option>
 
                         <option value="R">
-                            Relative Time
+                            R — Relative
                         </option>
 
                     </select>
 
                 </div>
 
+
                 <div class="card-body">
 
                     <div class="discord-preview">
 
-                        <div class="discord-topbar">
-                            <span class="discord-channel"># general</span>
+                        <div class="discord-bar">
+                            # general
                         </div>
 
-                        <div class="discord-message">
 
-                            <div class="fake-message">
+                        <div class="message">
 
-                                <div class="fake-avatar">
-                                    T
+                            <div class="avatar">
+                                T
+                            </div>
+
+
+                            <div>
+
+                                <div class="username">
+                                    TimestampBot
+
+                                    <span class="msg-time">
+                                        just now
+                                    </span>
                                 </div>
 
-                                <div>
 
-                                    <div class="fake-name">
-                                        TimestampBot
+                                <div class="message-content">
 
-                                        <span class="fake-time">
-                                            Today at 8:23 PM
-                                        </span>
-                                    </div>
+                                    The event starts
 
-                                    <div class="fake-content">
-                                        The event starts
-                                        <span
-                                            class="timestamp-highlight"
-                                            id="discordPreview">
-                                            Wednesday, September 30, 2026
-                                            8:00 PM
-                                        </span>
-                                        .
-                                    </div>
+                                    <span
+                                        class="timestamp-preview"
+                                        id="preview">
+                                        —
+                                    </span>
+
+                                    .
 
                                 </div>
 
@@ -1295,54 +1766,68 @@ input[type="number"] {
             </section>
 
 
-            <!-- GENERATED OUTPUT -->
+            <!-- MAIN OUTPUT -->
 
             <section class="card">
 
                 <div class="card-header">
 
                     <div>
-                        <h3 class="card-title">Generated Timestamp</h3>
-                        <div class="card-description">
-                            Copy the exact Discord syntax.
+                        <h3 class="card-title">
+                            Generated Discord Code
+                        </h3>
+
+                        <div class="card-subtitle">
+                            Paste this directly into Discord.
                         </div>
                     </div>
 
                     <button
-                        class="btn btn-primary btn-small"
-                        id="copyTagButton">
-                        Copy Tag
+                        class="btn primary small"
+                        id="copyMainBtn">
+                        Copy
                     </button>
 
                 </div>
 
+
                 <div class="card-body">
 
-                    <div class="code-box">
+                    <div class="code">
 
-                        <div class="code-header">
-                            <span>Discord Markup</span>
+                        <div class="code-head">
+
+                            <span>
+                                Discord Markup
+                            </span>
 
                             <button
-                                class="btn btn-small"
-                                id="copyCodeButton">
-                                Copy
+                                class="btn small"
+                                id="copyCodeBtn">
+                                Copy Code
                             </button>
+
                         </div>
 
+
                         <div class="code-content">
-                            <code id="timestampCode">
+
+                            <code id="mainCode">
                                 &lt;t:0:F&gt;
                             </code>
+
                         </div>
 
                     </div>
 
+
                     <div style="height:12px"></div>
+
 
                     <div class="stats">
 
                         <div class="stat">
+
                             <div class="stat-label">
                                 Unix Seconds
                             </div>
@@ -1352,9 +1837,12 @@ input[type="number"] {
                                 id="unixSeconds">
                                 —
                             </div>
+
                         </div>
 
+
                         <div class="stat">
+
                             <div class="stat-label">
                                 Unix Milliseconds
                             </div>
@@ -1364,18 +1852,22 @@ input[type="number"] {
                                 id="unixMilliseconds">
                                 —
                             </div>
+
                         </div>
 
+
                         <div class="stat">
+
                             <div class="stat-label">
-                                Selected Style
+                                Current Format
                             </div>
 
                             <div
                                 class="stat-value"
-                                id="selectedStyleLabel">
+                                id="formatName">
                                 Long Date/Time
                             </div>
+
                         </div>
 
                     </div>
@@ -1385,172 +1877,7 @@ input[type="number"] {
             </section>
 
 
-            <!-- ALL STYLES -->
-
-            <section class="card">
-
-                <div class="card-header">
-
-                    <div>
-                        <h3 class="card-title">All Discord Styles</h3>
-                        <div class="card-description">
-                            Every native Discord timestamp format.
-                        </div>
-                    </div>
-
-                    <button
-                        class="btn btn-small"
-                        id="copyAllButton">
-                        Copy All
-                    </button>
-
-                </div>
-
-                <div class="card-body">
-
-                    <div class="result-list">
-
-                        <div class="result-row">
-                            <div class="result-label">
-                                t — Short Time
-                            </div>
-
-                            <div
-                                class="result-value"
-                                id="result-t">
-                                —
-                            </div>
-
-                            <button
-                                class="btn btn-small copy-style"
-                                data-style="t">
-                                Copy
-                            </button>
-                        </div>
-
-                        <div class="result-row">
-                            <div class="result-label">
-                                T — Long Time
-                            </div>
-
-                            <div
-                                class="result-value"
-                                id="result-T">
-                                —
-                            </div>
-
-                            <button
-                                class="btn btn-small copy-style"
-                                data-style="T">
-                                Copy
-                            </button>
-                        </div>
-
-                        <div class="result-row">
-                            <div class="result-label">
-                                d — Short Date
-                            </div>
-
-                            <div
-                                class="result-value"
-                                id="result-d">
-                                —
-                            </div>
-
-                            <button
-                                class="btn btn-small copy-style"
-                                data-style="d">
-                                Copy
-                            </button>
-                        </div>
-
-                        <div class="result-row">
-                            <div class="result-label">
-                                D — Long Date
-                            </div>
-
-                            <div
-                                class="result-value"
-                                id="result-D">
-                                —
-                            </div>
-
-                            <button
-                                class="btn btn-small copy-style"
-                                data-style="D">
-                                Copy
-                            </button>
-                        </div>
-
-                        <div class="result-row">
-                            <div class="result-label">
-                                f — Short Date/Time
-                            </div>
-
-                            <div
-                                class="result-value"
-                                id="result-f">
-                                —
-                            </div>
-
-                            <button
-                                class="btn btn-small copy-style"
-                                data-style="f">
-                                Copy
-                            </button>
-                        </div>
-
-                        <div class="result-row">
-                            <div class="result-label">
-                                F — Long Date/Time
-                            </div>
-
-                            <div
-                                class="result-value"
-                                id="result-F">
-                                —
-                            </div>
-
-                            <button
-                                class="btn btn-small copy-style"
-                                data-style="F">
-                                Copy
-                            </button>
-                        </div>
-
-                        <div class="result-row">
-                            <div class="result-label">
-                                R — Relative Time
-                            </div>
-
-                            <div
-                                class="result-value"
-                                id="result-R">
-                                —
-                            </div>
-
-                            <button
-                                class="btn btn-small copy-style"
-                                data-style="R">
-                                Copy
-                            </button>
-                        </div>
-
-                    </div>
-
-                </div>
-            </section>
-
-        </div>
-
-
-        <!-- ==================================================
-             RIGHT COLUMN
-             ================================================== -->
-
-        <div class="right-column">
-
-            <!-- INFORMATION -->
+            <!-- ALL FORMATS -->
 
             <section class="card">
 
@@ -1558,77 +1885,305 @@ input[type="number"] {
 
                     <div>
                         <h3 class="card-title">
-                            Timestamp Information
+                            Every Discord Format
                         </h3>
 
-                        <div class="card-description">
-                            Technical details about your timestamp.
+                        <div class="card-subtitle">
+                            All seven native Discord timestamp styles.
+                        </div>
+                    </div>
+
+                    <button
+                        class="btn small"
+                        id="copyAllBtn">
+                        Copy All
+                    </button>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="results">
+
+                        <div class="result">
+                            <div class="result-label">
+                                t — Short Time
+                            </div>
+
+                            <div
+                                class="result-value"
+                                id="display-t">
+                                —
+                            </div>
+
+                            <button
+                                class="btn small copy-format"
+                                data-format="t">
+                                Copy
+                            </button>
+                        </div>
+
+
+                        <div class="result">
+                            <div class="result-label">
+                                T — Long Time
+                            </div>
+
+                            <div
+                                class="result-value"
+                                id="display-T">
+                                —
+                            </div>
+
+                            <button
+                                class="btn small copy-format"
+                                data-format="T">
+                                Copy
+                            </button>
+                        </div>
+
+
+                        <div class="result">
+                            <div class="result-label">
+                                d — Short Date
+                            </div>
+
+                            <div
+                                class="result-value"
+                                id="display-d">
+                                —
+                            </div>
+
+                            <button
+                                class="btn small copy-format"
+                                data-format="d">
+                                Copy
+                            </button>
+                        </div>
+
+
+                        <div class="result">
+                            <div class="result-label">
+                                D — Long Date
+                            </div>
+
+                            <div
+                                class="result-value"
+                                id="display-D">
+                                —
+                            </div>
+
+                            <button
+                                class="btn small copy-format"
+                                data-format="D">
+                                Copy
+                            </button>
+                        </div>
+
+
+                        <div class="result">
+                            <div class="result-label">
+                                f — Short Date/Time
+                            </div>
+
+                            <div
+                                class="result-value"
+                                id="display-f">
+                                —
+                            </div>
+
+                            <button
+                                class="btn small copy-format"
+                                data-format="f">
+                                Copy
+                            </button>
+                        </div>
+
+
+                        <div class="result">
+                            <div class="result-label">
+                                F — Long Date/Time
+                            </div>
+
+                            <div
+                                class="result-value"
+                                id="display-F">
+                                —
+                            </div>
+
+                            <button
+                                class="btn small copy-format"
+                                data-format="F">
+                                Copy
+                            </button>
+                        </div>
+
+
+                        <div class="result">
+                            <div class="result-label">
+                                R — Relative Time
+                            </div>
+
+                            <div
+                                class="result-value"
+                                id="display-R">
+                                —
+                            </div>
+
+                            <button
+                                class="btn small copy-format"
+                                data-format="R">
+                                Copy
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- =================================================
+             RIGHT
+             ================================================= -->
+
+        <div class="column">
+
+            <!-- TECHNICAL -->
+
+            <section class="card">
+
+                <div class="card-header">
+
+                    <div>
+                        <h3 class="card-title">
+                            Timestamp Data
+                        </h3>
+
+                        <div class="card-subtitle">
+                            The actual value being generated.
                         </div>
                     </div>
 
                 </div>
 
+
                 <div class="card-body">
 
-                    <div class="result-list">
+                    <div class="results">
 
-                        <div class="result-row">
+                        <div class="result">
+
+                            <div class="result-label">
+                                Unix
+                            </div>
+
+                            <div
+                                class="result-value"
+                                id="infoUnix">
+                                —
+                            </div>
+
+                            <button
+                                class="btn small"
+                                data-copy-id="infoUnix">
+                                Copy
+                            </button>
+
+                        </div>
+
+
+                        <div class="result">
+
+                            <div class="result-label">
+                                Milliseconds
+                            </div>
+
+                            <div
+                                class="result-value"
+                                id="infoMilliseconds">
+                                —
+                            </div>
+
+                            <button
+                                class="btn small"
+                                data-copy-id="infoMilliseconds">
+                                Copy
+                            </button>
+
+                        </div>
+
+
+                        <div class="result">
+
                             <div class="result-label">
                                 ISO 8601
                             </div>
 
                             <div
                                 class="result-value"
-                                id="isoOutput">
+                                id="infoISO">
                                 —
                             </div>
 
                             <button
-                                class="btn btn-small"
-                                id="copyIso">
+                                class="btn small"
+                                data-copy-id="infoISO">
                                 Copy
                             </button>
+
                         </div>
 
-                        <div class="result-row">
+
+                        <div class="result">
+
                             <div class="result-label">
                                 UTC
                             </div>
 
                             <div
                                 class="result-value"
-                                id="utcOutput">
+                                id="infoUTC">
                                 —
                             </div>
 
                             <button
-                                class="btn btn-small"
-                                id="copyUtc">
+                                class="btn small"
+                                data-copy-id="infoUTC">
                                 Copy
                             </button>
+
                         </div>
 
-                        <div class="result-row">
+
+                        <div class="result">
+
                             <div class="result-label">
                                 Local
                             </div>
 
                             <div
                                 class="result-value"
-                                id="localOutput">
+                                id="infoLocal">
                                 —
                             </div>
 
                             <button
-                                class="btn btn-small"
-                                id="copyLocal">
+                                class="btn small"
+                                data-copy-id="infoLocal">
                                 Copy
                             </button>
+
                         </div>
 
                     </div>
 
                 </div>
+
             </section>
 
 
@@ -1639,80 +2194,73 @@ input[type="number"] {
                 <div class="card-header">
 
                     <div>
-                        <h3 class="card-title">Generator Options</h3>
+                        <h3 class="card-title">
+                            Options
+                        </h3>
 
-                        <div class="card-description">
-                            Customize how the generator behaves.
+                        <div class="card-subtitle">
+                            Change how the generator behaves.
                         </div>
                     </div>
 
                 </div>
 
+
                 <div class="card-body">
 
-                    <div class="toggle-row">
+                    <div class="option">
 
-                        <div class="toggle-text">
-                            <strong>Auto-update current time</strong>
-                            <span>
-                                Keep "Now" values synchronized.
-                            </span>
+                        <div>
+                            <div class="option-title">
+                                12-hour clock
+                            </div>
+
+                            <div class="option-desc">
+                                Use AM/PM in previews.
+                            </div>
                         </div>
 
                         <label class="switch">
-                            <input
-                                type="checkbox"
-                                id="autoUpdate"
-                                checked>
 
-                            <span class="slider"></span>
-                        </label>
-
-                    </div>
-
-
-                    <div class="toggle-row">
-
-                        <div class="toggle-text">
-                            <strong>Include seconds</strong>
-                            <span>
-                                Preserve seconds when using date/time input.
-                            </span>
-                        </div>
-
-                        <label class="switch">
-                            <input
-                                type="checkbox"
-                                id="includeSeconds"
-                                checked>
-
-                            <span class="slider"></span>
-                        </label>
-
-                    </div>
-
-
-                    <div class="toggle-row">
-
-                        <div class="toggle-text">
-                            <strong>12-hour preview</strong>
-                            <span>
-                                Preview times using AM/PM formatting.
-                            </span>
-                        </div>
-
-                        <label class="switch">
                             <input
                                 type="checkbox"
                                 id="twelveHour"
                                 checked>
 
                             <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="option">
+
+                        <div>
+                            <div class="option-title">
+                                Live relative time
+                            </div>
+
+                            <div class="option-desc">
+                                Refresh R timestamps every second.
+                            </div>
+                        </div>
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="liveRelative"
+                                checked>
+
+                            <span class="slider"></span>
+
                         </label>
 
                     </div>
 
                 </div>
+
             </section>
 
 
@@ -1724,36 +2272,106 @@ input[type="number"] {
 
                     <div>
                         <h3 class="card-title">
-                            Batch Timestamp Generator
+                            Batch Generator
                         </h3>
 
-                        <div class="card-description">
-                            Enter one ISO date/time per line.
+                        <div class="card-subtitle">
+                            One ISO date/time or Unix timestamp per line.
                         </div>
                     </div>
 
                     <button
-                        class="btn btn-small btn-primary"
-                        id="batchGenerate">
+                        class="btn primary small"
+                        id="batchBtn">
                         Generate
                     </button>
 
                 </div>
 
+
                 <div class="card-body">
 
                     <textarea
                         id="batchInput"
-                        class="batch-input"
                         placeholder="2026-10-01T12:00:00
 2026-10-05T18:30:00
 2026-12-25T00:00:00"></textarea>
 
+
                     <div
-                        id="batchOutput"
-                        class="batch-output"></div>
+                        class="batch-output"
+                        id="batchOutput">
+                    </div>
 
                 </div>
+
+            </section>
+
+
+            <!-- DEBUG -->
+
+            <section class="card">
+
+                <div class="card-header">
+
+                    <div>
+                        <h3 class="card-title">
+                            Engine Status
+                        </h3>
+
+                        <div class="card-subtitle">
+                            Useful for verifying the generator is functioning.
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="results">
+
+                        <div class="result">
+                            <div class="result-label">
+                                Browser Timezone
+                            </div>
+
+                            <div
+                                class="result-value"
+                                id="browserTimezone">
+                                —
+                            </div>
+                        </div>
+
+
+                        <div class="result">
+                            <div class="result-label">
+                                Date Valid
+                            </div>
+
+                            <div
+                                class="result-value"
+                                id="dateValid">
+                                —
+                            </div>
+                        </div>
+
+
+                        <div class="result">
+                            <div class="result-label">
+                                Engine
+                            </div>
+
+                            <div
+                                class="result-value">
+                                Unix seconds
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
             </section>
 
 
@@ -1765,11 +2383,12 @@ input[type="number"] {
 
                     <div>
                         <h3 class="card-title">
-                            How Discord Timestamps Work
+                            Discord Syntax
                         </h3>
                     </div>
 
                 </div>
+
 
                 <div class="card-body">
 
@@ -1780,66 +2399,29 @@ input[type="number"] {
                             font-size:12px;
                             line-height:1.7;
                         ">
-                        Discord timestamps use Unix time and the format
-                        <code>&lt;t:UNIX:STYLE&gt;</code>.
+
+                        Discord timestamps use:
+
+                        <br><br>
+
+                        <code>
+                            &lt;t:UNIX:STYLE&gt;
+                        </code>
+
+                        <br><br>
+
+                        Example:
+
+                        <br>
+
+                        <code>
+                            &lt;t:1790812800:F&gt;
+                        </code>
+
                     </p>
 
-                    <div style="height:10px"></div>
-
-                    <div class="result-list">
-
-                        <div class="result-row">
-                            <div class="result-label">t</div>
-                            <div class="result-value">
-                                Short time
-                            </div>
-                        </div>
-
-                        <div class="result-row">
-                            <div class="result-label">T</div>
-                            <div class="result-value">
-                                Long time
-                            </div>
-                        </div>
-
-                        <div class="result-row">
-                            <div class="result-label">d</div>
-                            <div class="result-value">
-                                Short date
-                            </div>
-                        </div>
-
-                        <div class="result-row">
-                            <div class="result-label">D</div>
-                            <div class="result-value">
-                                Long date
-                            </div>
-                        </div>
-
-                        <div class="result-row">
-                            <div class="result-label">f</div>
-                            <div class="result-value">
-                                Short date + time
-                            </div>
-                        </div>
-
-                        <div class="result-row">
-                            <div class="result-label">F</div>
-                            <div class="result-value">
-                                Long date + time
-                            </div>
-                        </div>
-
-                        <div class="result-row">
-                            <div class="result-label">R</div>
-                            <div class="result-value">
-                                Relative time
-                            </div>
-                        </div>
-
-                    </div>
-
                 </div>
+
             </section>
 
         </div>
@@ -1848,17 +2430,20 @@ input[type="number"] {
 
 
     <footer class="footer">
-        <strong>Discord Timestamp Generator</strong>
+
+        <strong>
+            Discord Timestamp Generator
+        </strong>
+
         <br>
-        Everything runs locally in your browser. No timestamp data is uploaded.
+
+        Runs entirely in your browser.
+        No timestamp data is sent anywhere.
+
     </footer>
 
 </main>
 
-
-<!-- ==========================================================
-     TOAST CONTAINER
-     ========================================================== -->
 
 <div
     class="toast-container"
@@ -1866,18 +2451,14 @@ input[type="number"] {
 </div>
 
 
-<!-- ==========================================================
-     JAVASCRIPT
-     ========================================================== -->
-
 <script>
 "use strict";
 
-/* ============================================================
+/* =========================================================
    CONSTANTS
-   ============================================================ */
+   ========================================================= */
 
-const STYLE_NAMES = {
+const FORMATS = {
     t: "Short Time",
     T: "Long Time",
     d: "Short Date",
@@ -1887,207 +2468,451 @@ const STYLE_NAMES = {
     R: "Relative Time"
 };
 
-const STYLE_ORDER = ["t", "T", "d", "D", "f", "F", "R"];
+const FORMAT_ORDER = [
+    "t",
+    "T",
+    "d",
+    "D",
+    "f",
+    "F",
+    "R"
+];
 
 
-/* ============================================================
-   DOM REFERENCES
-   ============================================================ */
+/* =========================================================
+   STATE
+   ========================================================= */
 
-const $ = id => document.getElementById(id);
+/*
+   IMPORTANT:
 
-const dateInput = $("dateInput");
-const timeInput = $("timeInput");
-const secondsInput = $("secondsInput");
-const timezoneInput = $("timezoneInput");
-const unixInput = $("unixInput");
+   The application has ONE authoritative timestamp:
 
-const datetimeMode = $("datetimeMode");
-const unixMode = $("unixMode");
+       state.unixSeconds
 
-const timestampCode = $("timestampCode");
-const unixSeconds = $("unixSeconds");
-const unixMilliseconds = $("unixMilliseconds");
+   Everything else is derived from it.
 
-const isoOutput = $("isoOutput");
-const utcOutput = $("utcOutput");
-const localOutput = $("localOutput");
-
-const discordPreview = $("discordPreview");
-const styleSelect = $("styleSelect");
-const selectedStyleLabel = $("selectedStyleLabel");
-
-const autoUpdate = $("autoUpdate");
-const includeSeconds = $("includeSeconds");
-const twelveHour = $("twelveHour");
-
-const toastContainer = $("toastContainer");
-
-
-/* ============================================================
-   APPLICATION STATE
-   ============================================================ */
+   This prevents the common bug where the date display says
+   one thing but the generated Discord code contains another
+   timestamp.
+*/
 
 const state = {
-    inputMode: "datetime",
-    timestamp: Math.floor(Date.now() / 1000),
-    style: "f",
-    timezone: "local",
-    autoUpdate: true,
-    includeSeconds: true,
-    twelveHour: true
+    unixSeconds: 0,
+    format: "F",
+    mode: "date",
+    timezone: "local"
 };
 
 
-/* ============================================================
-   DATE HELPERS
-   ============================================================ */
+/* =========================================================
+   DOM
+   ========================================================= */
 
-/**
- * Pads a number with a leading zero.
- */
-function pad(value, length = 2) {
-    return String(value).padStart(length, "0");
+const el = {
+    date: document.getElementById("dateInput"),
+    time: document.getElementById("timeInput"),
+    seconds: document.getElementById("secondsInput"),
+
+    timezone:
+        document.getElementById("timezoneInput"),
+
+    unix:
+        document.getElementById("unixInput"),
+
+    datePanel:
+        document.getElementById("datePanel"),
+
+    unixPanel:
+        document.getElementById("unixPanel"),
+
+    style:
+        document.getElementById("styleSelect"),
+
+    preview:
+        document.getElementById("preview"),
+
+    mainCode:
+        document.getElementById("mainCode"),
+
+    unixSeconds:
+        document.getElementById("unixSeconds"),
+
+    unixMilliseconds:
+        document.getElementById("unixMilliseconds"),
+
+    formatName:
+        document.getElementById("formatName"),
+
+    infoUnix:
+        document.getElementById("infoUnix"),
+
+    infoMilliseconds:
+        document.getElementById("infoMilliseconds"),
+
+    infoISO:
+        document.getElementById("infoISO"),
+
+    infoUTC:
+        document.getElementById("infoUTC"),
+
+    infoLocal:
+        document.getElementById("infoLocal"),
+
+    browserTimezone:
+        document.getElementById("browserTimezone"),
+
+    dateValid:
+        document.getElementById("dateValid"),
+
+    twelveHour:
+        document.getElementById("twelveHour"),
+
+    liveRelative:
+        document.getElementById("liveRelative"),
+
+    toast:
+        document.getElementById("toastContainer")
+};
+
+
+/* =========================================================
+   BASIC HELPERS
+   ========================================================= */
+
+function pad(value, digits = 2) {
+    return String(value).padStart(digits, "0");
 }
 
 
-/**
- * Converts a Date into YYYY-MM-DD.
- */
-function dateToInputValue(date) {
-    return [
-        date.getFullYear(),
-        pad(date.getMonth() + 1),
-        pad(date.getDate())
-    ].join("-");
+function isValidDate(date) {
+    return (
+        date instanceof Date &&
+        !Number.isNaN(date.getTime())
+    );
 }
 
 
-/**
- * Converts a Date into HH:mm:ss.
- */
-function timeToInputValue(date) {
-    return [
-        pad(date.getHours()),
-        pad(date.getMinutes()),
-        pad(date.getSeconds())
-    ].join(":");
-}
+/* =========================================================
+   UNIX VALIDATION
+   ========================================================= */
 
+/*
+   Discord uses Unix time in SECONDS.
 
-/**
- * Converts a Date into the local datetime input format.
- */
-function dateToLocalInputs(date) {
-    dateInput.value = dateToInputValue(date);
-    timeInput.value = timeToInputValue(date);
-    secondsInput.value = date.getSeconds();
-}
+   This function accepts:
 
+       1790812800
+       1790812800000
 
-/**
- * Returns a Date representing the browser's local current time.
- */
-function nowDate() {
-    return new Date();
-}
+   and converts milliseconds automatically.
+*/
 
+function parseUnix(input) {
 
-/* ============================================================
-   TIMEZONE CONVERSION
-   ============================================================ */
+    const raw =
+        String(input)
+            .trim()
+            .replace(/,/g, "");
 
-/**
- * Get timezone offset in milliseconds for a specific instant.
- *
- * Intl.DateTimeFormat is used instead of hardcoded DST rules.
- */
-function getTimezoneOffsetMilliseconds(date, timeZone) {
-
-    if (!timeZone || timeZone === "local") {
-        return -date.getTimezoneOffset() * 60 * 1000;
+    if (raw === "") {
+        throw new Error(
+            "Unix timestamp is empty."
+        );
     }
 
-    const parts = new Intl.DateTimeFormat("en-US", {
-        timeZone,
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hourCycle: "h23"
-    }).formatToParts(date);
+
+    /*
+       Decimal Unix timestamps aren't necessary for
+       Discord timestamps, so require integers.
+    */
+
+    if (!/^-?\d+$/.test(raw)) {
+
+        throw new Error(
+            "Unix timestamp must contain numbers only."
+        );
+    }
+
+
+    let number =
+        Number(raw);
+
+
+    if (!Number.isFinite(number)) {
+
+        throw new Error(
+            "That timestamp is outside the supported range."
+        );
+    }
+
+
+    /*
+       13 digits usually means milliseconds.
+    */
+
+    if (
+        Math.abs(number) >= 100000000000
+    ) {
+        number =
+            number / 1000;
+    }
+
+
+    number =
+        Math.floor(number);
+
+
+    /*
+       JavaScript Date supports a much larger range than
+       Discord practically needs, but checking the Date here
+       catches nonsense values.
+    */
+
+    const date =
+        new Date(number * 1000);
+
+
+    if (!isValidDate(date)) {
+
+        throw new Error(
+            "That Unix timestamp is invalid."
+        );
+    }
+
+
+    return number;
+}
+
+
+/* =========================================================
+   LOCAL DATE/TIME
+   ========================================================= */
+
+function dateToInput(date) {
+
+    return (
+        date.getFullYear() +
+        "-" +
+        pad(date.getMonth() + 1) +
+        "-" +
+        pad(date.getDate())
+    );
+}
+
+
+function timeToInput(date) {
+
+    return (
+        pad(date.getHours()) +
+        ":" +
+        pad(date.getMinutes()) +
+        ":" +
+        pad(date.getSeconds())
+    );
+}
+
+
+function loadDateFieldsFromUnix(unixSeconds) {
+
+    const date =
+        new Date(unixSeconds * 1000);
+
+
+    if (!isValidDate(date)) {
+        return false;
+    }
+
+
+    el.date.value =
+        dateToInput(date);
+
+    el.time.value =
+        timeToInput(date);
+
+    el.seconds.value =
+        date.getSeconds();
+
+    return true;
+}
+
+
+/* =========================================================
+   TIMEZONE ENGINE
+   ========================================================= */
+
+/*
+   Returns the offset, in milliseconds, for a timezone
+   at a particular instant.
+
+   This uses Intl instead of manually hardcoding daylight
+   saving time rules.
+*/
+
+function timezoneOffset(date, timezone) {
+
+    if (
+        !timezone ||
+        timezone === "local"
+    ) {
+
+        return (
+            -date.getTimezoneOffset() *
+            60 *
+            1000
+        );
+    }
+
+
+    const parts =
+        new Intl.DateTimeFormat(
+            "en-US",
+            {
+                timeZone: timezone,
+
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+
+                hourCycle: "h23"
+            }
+        ).formatToParts(date);
+
 
     const values = {};
 
+
     for (const part of parts) {
-        if (part.type !== "literal") {
-            values[part.type] = Number(part.value);
+
+        if (
+            part.type !== "literal"
+        ) {
+            values[part.type] =
+                Number(part.value);
         }
     }
 
-    const asUTC = Date.UTC(
-        values.year,
-        values.month - 1,
-        values.day,
-        values.hour,
-        values.minute,
-        values.second
-    );
 
-    return asUTC - date.getTime();
+    const reconstructedUTC =
+        Date.UTC(
+            values.year,
+            values.month - 1,
+            values.day,
+            values.hour,
+            values.minute,
+            values.second
+        );
+
+
+    return (
+        reconstructedUTC -
+        date.getTime()
+    );
 }
 
 
-/**
- * Convert a local date/time represented by components in a chosen
- * timezone into a real Unix timestamp.
- *
- * This iterative approach accounts for DST changes.
- */
-function zonedComponentsToDate(
+/*
+   Converts calendar components that are intended to be
+   in a particular timezone into a real JavaScript Date.
+
+   Example:
+
+       2026-09-30 20:00
+       America/New_York
+
+   becomes the correct UTC instant.
+*/
+
+function componentsToDate(
     year,
     month,
     day,
     hour,
     minute,
     second,
-    timeZone
+    timezone
 ) {
 
-    if (!timeZone || timeZone === "local") {
-        return new Date(
-            year,
-            month - 1,
-            day,
-            hour,
-            minute,
-            second,
-            0
-        );
+    /*
+       Browser local timezone.
+    */
+
+    if (
+        !timezone ||
+        timezone === "local"
+    ) {
+
+        const date =
+            new Date(
+                year,
+                month - 1,
+                day,
+                hour,
+                minute,
+                second,
+                0
+            );
+
+
+        /*
+           Verify that JavaScript didn't normalize an
+           impossible date such as February 31.
+        */
+
+        if (
+            date.getFullYear() !== year ||
+            date.getMonth() !== month - 1 ||
+            date.getDate() !== day ||
+            date.getHours() !== hour ||
+            date.getMinutes() !== minute ||
+            date.getSeconds() !== second
+        ) {
+            throw new Error(
+                "The selected local date/time is invalid."
+            );
+        }
+
+
+        return date;
     }
 
-    let guess = new Date(
-        Date.UTC(
-            year,
-            month - 1,
-            day,
-            hour,
-            minute,
-            second,
-            0
-        )
-    );
 
-    for (let i = 0; i < 4; i++) {
+    /*
+       Start with a UTC guess.
+    */
 
-        const offset = getTimezoneOffsetMilliseconds(
-            guess,
-            timeZone
+    let guess =
+        new Date(
+            Date.UTC(
+                year,
+                month - 1,
+                day,
+                hour,
+                minute,
+                second
+            )
         );
 
-        const corrected =
+
+    /*
+       Refine the guess because timezone offsets can
+       change around DST boundaries.
+    */
+
+    for (let i = 0; i < 6; i++) {
+
+        const offset =
+            timezoneOffset(
+                guess,
+                timezone
+            );
+
+
+        const target =
             Date.UTC(
                 year,
                 month - 1,
@@ -2097,134 +2922,228 @@ function zonedComponentsToDate(
                 second
             ) - offset;
 
-        if (Math.abs(corrected - guess.getTime()) < 1000) {
-            return new Date(corrected);
+
+        if (
+            Math.abs(
+                target -
+                guess.getTime()
+            ) < 1000
+        ) {
+
+            guess =
+                new Date(target);
+
+            break;
         }
 
-        guess = new Date(corrected);
+
+        guess =
+            new Date(target);
     }
+
+
+    if (!isValidDate(guess)) {
+
+        throw new Error(
+            "Could not calculate the selected timezone."
+        );
+    }
+
 
     return guess;
 }
 
 
-/**
- * Read the date/time form and return a Date.
- */
-function getDateFromForm() {
+/* =========================================================
+   DATE FORM -> UNIX
+   ========================================================= */
 
-    if (!dateInput.value || !timeInput.value) {
-        throw new Error("Please enter a valid date and time.");
+function dateFormToUnix() {
+
+    if (!el.date.value) {
+
+        throw new Error(
+            "Please select a date."
+        );
     }
 
-    const dateParts = dateInput.value.split("-").map(Number);
 
-    const timeParts = timeInput.value.split(":").map(Number);
+    if (!el.time.value) {
 
-    const year = dateParts[0];
-    const month = dateParts[1];
-    const day = dateParts[2];
-
-    const hour = timeParts[0] || 0;
-    const minute = timeParts[1] || 0;
-
-    let second = includeSeconds.checked
-        ? Number(secondsInput.value || timeParts[2] || 0)
-        : 0;
-
-    second = Math.max(0, Math.min(59, second));
-
-    return zonedComponentsToDate(
-        year,
-        month,
-        day,
-        hour,
-        minute,
-        second,
-        timezoneInput.value
-    );
-}
-
-
-/* ============================================================
-   UNIX PARSING
-   ============================================================ */
-
-function parseUnix(value) {
-
-    const cleaned = String(value)
-        .trim()
-        .replace(/,/g, "");
-
-    if (!/^-?\d+$/.test(cleaned)) {
-        throw new Error("Unix timestamp must contain numbers only.");
+        throw new Error(
+            "Please select a time."
+        );
     }
 
-    let numeric = Number(cleaned);
 
-    if (!Number.isFinite(numeric)) {
-        throw new Error("That timestamp is too large.");
-    }
+    const dateParts =
+        el.date.value
+            .split("-")
+            .map(Number);
+
+
+    const timeParts =
+        el.time.value
+            .split(":")
+            .map(Number);
+
+
+    const year =
+        dateParts[0];
+
+    const month =
+        dateParts[1];
+
+    const day =
+        dateParts[2];
+
+    const hour =
+        timeParts[0];
+
+    const minute =
+        timeParts[1];
+
+    let second =
+        Number(
+            el.seconds.value || 0
+        );
+
 
     /*
-       Discord uses seconds.
-
-       If the supplied number is sufficiently large to represent
-       milliseconds, automatically convert it.
+       Normalize seconds safely.
     */
-    if (Math.abs(numeric) >= 100000000000) {
-        numeric /= 1000;
+
+    if (!Number.isFinite(second)) {
+        second = 0;
     }
 
-    if (!Number.isSafeInteger(Math.trunc(numeric))) {
-        numeric = Math.trunc(numeric);
+
+    second =
+        Math.max(
+            0,
+            Math.min(
+                59,
+                Math.floor(second)
+            )
+        );
+
+
+    if (
+        !year ||
+        !month ||
+        !day ||
+        !Number.isFinite(hour) ||
+        !Number.isFinite(minute)
+    ) {
+
+        throw new Error(
+            "The date or time is invalid."
+        );
     }
 
-    return numeric;
+
+    const date =
+        componentsToDate(
+            year,
+            month,
+            day,
+            hour,
+            minute,
+            second,
+            el.timezone.value
+        );
+
+
+    const unix =
+        Math.floor(
+            date.getTime() / 1000
+        );
+
+
+    if (!Number.isSafeInteger(unix)) {
+
+        throw new Error(
+            "Generated Unix timestamp is outside the safe range."
+        );
+    }
+
+
+    return unix;
 }
 
 
-/* ============================================================
-   DISCORD FORMATTING
-   ============================================================ */
+/* =========================================================
+   FORMATTER
+   ========================================================= */
 
-function getIntlOptions(style) {
+function formatAbsolute(unix, format) {
 
-    const hour12 = twelveHour.checked;
+    const date =
+        new Date(unix * 1000);
 
-    switch (style) {
+
+    if (!isValidDate(date)) {
+        return "Invalid Date";
+    }
+
+
+    const hour12 =
+        el.twelveHour.checked;
+
+
+    let options;
+
+
+    switch (format) {
 
         case "t":
-            return {
+
+            options = {
                 hour: "numeric",
                 minute: "2-digit",
                 hour12
             };
 
+            break;
+
+
         case "T":
-            return {
+
+            options = {
                 hour: "numeric",
                 minute: "2-digit",
                 second: "2-digit",
                 hour12
             };
 
+            break;
+
+
         case "d":
-            return {
+
+            options = {
                 year: "numeric",
                 month: "numeric",
                 day: "numeric"
             };
 
+            break;
+
+
         case "D":
-            return {
+
+            options = {
                 year: "numeric",
                 month: "long",
                 day: "numeric"
             };
 
+            break;
+
+
         case "f":
-            return {
+
+            options = {
                 year: "numeric",
                 month: "long",
                 day: "numeric",
@@ -2233,8 +3152,12 @@ function getIntlOptions(style) {
                 hour12
             };
 
+            break;
+
+
         case "F":
-            return {
+
+            options = {
                 weekday: "long",
                 year: "numeric",
                 month: "long",
@@ -2244,76 +3167,107 @@ function getIntlOptions(style) {
                 hour12
             };
 
+            break;
+
+
         default:
-            return {};
-    }
-}
 
-
-/**
- * Formats an absolute timestamp in the browser's local timezone.
- *
- * Discord itself localizes timestamps for each viewer.
- */
-function formatDiscordStyle(timestamp, style) {
-
-    if (style === "R") {
-        return formatRelative(timestamp);
+            return "Invalid style";
     }
 
-    const date = new Date(timestamp * 1000);
 
     return new Intl.DateTimeFormat(
         undefined,
-        getIntlOptions(style)
+        options
     ).format(date);
 }
 
 
-/* ============================================================
-   RELATIVE TIME
-   ============================================================ */
+/* =========================================================
+   RELATIVE FORMAT
+   ========================================================= */
 
-function formatRelative(timestamp) {
+function formatRelative(unix) {
 
-    const now = Date.now();
+    const difference =
+        unix -
+        Math.floor(
+            Date.now() / 1000
+        );
 
-    const target = timestamp * 1000;
 
-    let seconds =
-        Math.round((target - now) / 1000);
+    const future =
+        difference > 0;
 
-    const future = seconds > 0;
 
-    seconds = Math.abs(seconds);
+    const absolute =
+        Math.abs(difference);
+
 
     const units = [
-        ["year", 31536000],
-        ["month", 2592000],
-        ["week", 604800],
-        ["day", 86400],
-        ["hour", 3600],
-        ["minute", 60],
-        ["second", 1]
+        {
+            name: "year",
+            seconds: 31536000
+        },
+
+        {
+            name: "month",
+            seconds: 2592000
+        },
+
+        {
+            name: "week",
+            seconds: 604800
+        },
+
+        {
+            name: "day",
+            seconds: 86400
+        },
+
+        {
+            name: "hour",
+            seconds: 3600
+        },
+
+        {
+            name: "minute",
+            seconds: 60
+        },
+
+        {
+            name: "second",
+            seconds: 1
+        }
     ];
 
-    for (const [unit, amount] of units) {
 
-        if (seconds >= amount) {
+    for (const unit of units) {
 
-            const value =
-                Math.round(seconds / amount);
+        if (
+            absolute >=
+            unit.seconds
+        ) {
+
+            const amount =
+                Math.round(
+                    absolute /
+                    unit.seconds
+                );
+
 
             const name =
-                value === 1
-                    ? unit
-                    : unit + "s";
+                amount === 1
+                    ? unit.name
+                    : unit.name + "s";
+
 
             return future
-                ? `in ${value} ${name}`
-                : `${value} ${name} ago`;
+                ? `in ${amount} ${name}`
+                : `${amount} ${name} ago`;
         }
     }
+
 
     return future
         ? "in a few seconds"
@@ -2321,81 +3275,1221 @@ function formatRelative(timestamp) {
 }
 
 
-/* ============================================================
-   UPDATE DATE FORM
-   ============================================================ */
+/* =========================================================
+   GENERIC FORMAT
+   ========================================================= */
 
-function updateFormFromTimestamp(timestamp) {
+function formatDiscord(unix, format) {
 
-    const date = new Date(timestamp * 1000);
-
-    dateToLocalInputs(date);
-
-    unixInput.value = String(timestamp);
-}
-
-
-/* ============================================================
-   GET CURRENT TIMESTAMP
-   ============================================================ */
-
-function getCurrentTimestamp() {
-
-    if (state.inputMode === "unix") {
-
-        return parseUnix(unixInput.value);
+    if (format === "R") {
+        return formatRelative(unix);
     }
 
-    return Math.floor(
-        getDateFromForm().getTime() / 1000
+    return formatAbsolute(
+        unix,
+        format
     );
 }
 
 
-/* ============================================================
-   RENDER EVERYTHING
-   ============================================================ */
+/* =========================================================
+   SET TIMESTAMP
+   ========================================================= */
+
+/*
+   This is the central function.
+
+   Every button eventually calls this.
+
+   It:
+       1. validates the Unix timestamp
+       2. stores it
+       3. updates the fields
+       4. updates every display
+*/
+
+function setTimestamp(
+    unixSeconds,
+    options = {}
+) {
+
+    const numeric =
+        Number(unixSeconds);
+
+
+    if (
+        !Number.isFinite(numeric)
+    ) {
+
+        throw new Error(
+            "Invalid timestamp."
+        );
+    }
+
+
+    const unix =
+        Math.floor(numeric);
+
+
+    const date =
+        new Date(
+            unix * 1000
+        );
+
+
+    if (!isValidDate(date)) {
+
+        throw new Error(
+            "Invalid timestamp."
+        );
+    }
+
+
+    state.unixSeconds =
+        unix;
+
+
+    if (
+        options.loadFields !== false
+    ) {
+
+        loadDateFieldsFromUnix(
+            unix
+        );
+    }
+
+
+    if (
+        options.loadUnixField !== false
+    ) {
+
+        el.unix.value =
+            String(unix);
+    }
+
+
+    render();
+}
+
+
+/* =========================================================
+   RENDER
+   ========================================================= */
 
 function render() {
 
-    try {
+    const unix =
+        state.unixSeconds;
 
-        const timestamp = getCurrentTimestamp();
 
-        state.timestamp = timestamp;
+    /*
+       Main Discord code.
+    */
 
-        const selectedStyle =
-            styleSelect.value;
+    const selectedFormat =
+        el.style.value;
 
-        state.style = selectedStyle;
 
-        /* Main tag */
+    state.format =
+        selectedFormat;
 
-        const tag =
-            `<t:${timestamp}:${selectedStyle}>`;
 
-        timestampCode.textContent = tag;
+    const code =
+        `<t:${unix}:${selectedFormat}>`;
 
-        /* Stats */
 
-        unixSeconds.textContent =
-            timestamp.toLocaleString();
+    el.mainCode.textContent =
+        code;
 
-        unixMilliseconds.textContent =
-            (timestamp * 1000).toLocaleString();
 
-        selectedStyleLabel.textContent =
-            STYLE_NAMES[selectedStyle];
+    /*
+       Main stats.
+    */
 
-        /* Preview */
+    el.unixSeconds.textContent =
+        unix.toLocaleString();
 
-        discordPreview.textContent =
-            formatDiscordStyle(
-                timestamp,
-                selectedStyle
+
+    el.unixMilliseconds.textContent =
+        (
+            unix * 1000
+        ).toLocaleString();
+
+
+    el.formatName.textContent =
+        FORMATS[selectedFormat];
+
+
+    /*
+       Preview.
+    */
+
+    el.preview.textContent =
+        formatDiscord(
+            unix,
+            selectedFormat
+        );
+
+
+    /*
+       Every Discord style.
+    */
+
+    for (
+        const format of FORMAT_ORDER
+    ) {
+
+        const output =
+            document.getElementById(
+                `display-${format}`
             );
 
-        /* All styles */
 
-        for (
+        output.textContent =
+            formatDiscord(
+                unix,
+                format
+            );
+    }
+
+
+    /*
+       Technical values.
+    */
+
+    const date =
+        new Date(
+            unix * 1000
+        );
+
+
+    el.infoUnix.textContent =
+        String(unix);
+
+
+    el.infoMilliseconds.textContent =
+        String(unix * 1000);
+
+
+    el.infoISO.textContent =
+        date.toISOString();
+
+
+    el.infoUTC.textContent =
+        date.toUTCString();
+
+
+    el.infoLocal.textContent =
+        date.toLocaleString();
+
+
+    /*
+       Debug information.
+    */
+
+    el.browserTimezone.textContent =
+        Intl.DateTimeFormat()
+            .resolvedOptions()
+            .timeZone;
+
+
+    el.dateValid.textContent =
+        isValidDate(date)
+            ? "YES"
+            : "NO";
+}
+
+
+/* =========================================================
+   ERROR HANDLING
+   ========================================================= */
+
+function safeDateUpdate() {
+
+    try {
+
+        const unix =
+            dateFormToUnix();
+
+
+        state.unixSeconds =
+            unix;
+
+
+        el.unix.value =
+            String(unix);
+
+
+        render();
+
+    } catch (error) {
+
+        el.dateValid.textContent =
+            "NO";
+
+
+        showToast(
+            error.message,
+            "error"
+        );
+    }
+}
+
+
+/* =========================================================
+   TABS
+   ========================================================= */
+
+document
+    .querySelectorAll(".tab")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                document
+                    .querySelectorAll(".tab")
+                    .forEach(tab => {
+
+                        tab.classList.remove(
+                            "active"
+                        );
+                    });
+
+
+                button.classList.add(
+                    "active"
+                );
+
+
+                state.mode =
+                    button.dataset.mode;
+
+
+                if (
+                    state.mode === "date"
+                ) {
+
+                    el.datePanel.hidden =
+                        false;
+
+                    el.unixPanel.hidden =
+                        true;
+
+                } else {
+
+                    el.datePanel.hidden =
+                        true;
+
+                    el.unixPanel.hidden =
+                        false;
+                }
+            }
+        );
+    });
+
+
+/* =========================================================
+   DATE INPUT EVENTS
+   ========================================================= */
+
+el.date.addEventListener(
+    "input",
+    safeDateUpdate
+);
+
+
+el.time.addEventListener(
+    "input",
+    safeDateUpdate
+);
+
+
+el.seconds.addEventListener(
+    "input",
+    safeDateUpdate
+);
+
+
+el.timezone.addEventListener(
+    "change",
+    safeDateUpdate
+);
+
+
+/* =========================================================
+   UNIX INPUT
+   ========================================================= */
+
+function applyUnixInput() {
+
+    try {
+
+        const unix =
+            parseUnix(
+                el.unix.value
+            );
+
+
+        setTimestamp(
+            unix,
+            {
+                loadFields: true,
+                loadUnixField: true
+            }
+        );
+
+
+        showToast(
+            "Unix timestamp applied.",
+            "success"
+        );
+
+    } catch (error) {
+
+        showToast(
+            error.message,
+            "error"
+        );
+    }
+}
+
+
+document
+    .getElementById("applyUnixBtn")
+    .addEventListener(
+        "click",
+        applyUnixInput
+    );
+
+
+el.unix.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            event.preventDefault();
+
+            applyUnixInput();
+        }
+    }
+);
+
+
+/* =========================================================
+   FORMAT CHANGE
+   ========================================================= */
+
+el.style.addEventListener(
+    "change",
+    render
+);
+
+
+el.twelveHour.addEventListener(
+    "change",
+    render
+);
+
+
+/* =========================================================
+   NOW BUTTON
+   ========================================================= */
+
+document
+    .getElementById("nowBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            setTimestamp(
+                Math.floor(
+                    Date.now() / 1000
+                )
+            );
+
+
+            showToast(
+                "Current time loaded.",
+                "success"
+            );
+        }
+    );
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+document
+    .getElementById("resetBtn")
+    .addEventListener(
+        "click",
+        initialize
+    );
+
+
+/* =========================================================
+   PRESETS
+   ========================================================= */
+
+document
+    .querySelectorAll("[data-preset]")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const type =
+                    button.dataset.preset;
+
+
+                const now =
+                    Math.floor(
+                        Date.now() / 1000
+                    );
+
+
+                let target;
+
+
+                switch (type) {
+
+                    case "now":
+
+                        target =
+                            now;
+
+                        break;
+
+
+                    case "hour":
+
+                        target =
+                            now + 3600;
+
+                        break;
+
+
+                    case "day":
+
+                        target =
+                            now + 86400;
+
+                        break;
+
+
+                    case "week":
+
+                        target =
+                            now + 604800;
+
+                        break;
+
+
+                    case "month":
+
+                        target =
+                            now + 2592000;
+
+                        break;
+
+
+                    case "newyear": {
+
+                        const current =
+                            new Date();
+
+
+                        const nextYear =
+                            current.getFullYear() + 1;
+
+
+                        const nextYearDate =
+                            new Date(
+                                nextYear,
+                                0,
+                                1,
+                                0,
+                                0,
+                                0,
+                                0
+                            );
+
+
+                        target =
+                            Math.floor(
+                                nextYearDate.getTime() /
+                                1000
+                            );
+
+                        break;
+                    }
+
+
+                    default:
+
+                        return;
+                }
+
+
+                setTimestamp(
+                    target
+                );
+
+
+                showToast(
+                    "Preset applied.",
+                    "success"
+                );
+            }
+        );
+    });
+
+
+/* =========================================================
+   COPY
+   ========================================================= */
+
+async function copyText(
+    text,
+    message = "Copied!"
+) {
+
+    /*
+       Modern Clipboard API.
+    */
+
+    try {
+
+        if (
+            navigator.clipboard &&
+            window.isSecureContext
+        ) {
+
+            await navigator.clipboard.writeText(
+                text
+            );
+
+            showToast(
+                message,
+                "success"
+            );
+
+            return;
+        }
+
+    } catch (_) {
+        /*
+           Fall through to legacy method.
+        */
+    }
+
+
+    /*
+       Legacy browser fallback.
+    */
+
+    const textarea =
+        document.createElement(
+            "textarea"
+        );
+
+
+    textarea.value =
+        text;
+
+
+    textarea.style.position =
+        "fixed";
+
+    textarea.style.left =
+        "-9999px";
+
+
+    document.body.appendChild(
+        textarea
+    );
+
+
+    textarea.focus();
+    textarea.select();
+
+
+    let copied = false;
+
+
+    try {
+
+        copied =
+            document.execCommand(
+                "copy"
+            );
+
+    } catch (_) {
+
+        copied = false;
+    }
+
+
+    textarea.remove();
+
+
+    if (copied) {
+
+        showToast(
+            message,
+            "success"
+        );
+
+    } else {
+
+        showToast(
+            "Copy failed. Select the text manually.",
+            "error"
+        );
+    }
+}
+
+
+/* =========================================================
+   MAIN COPY
+   ========================================================= */
+
+document
+    .getElementById("copyMainBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            copyText(
+                el.mainCode.textContent,
+                "Discord timestamp copied!"
+            );
+        }
+    );
+
+
+document
+    .getElementById("copyCodeBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            copyText(
+                el.mainCode.textContent,
+                "Discord code copied!"
+            );
+        }
+    );
+
+
+/* =========================================================
+   FORMAT COPY BUTTONS
+   ========================================================= */
+
+document
+    .querySelectorAll(".copy-format")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const format =
+                    button.dataset.format;
+
+
+                const code =
+                    `<t:${state.unixSeconds}:${format}>`;
+
+
+                copyText(
+                    code,
+                    `${FORMATS[format]} timestamp copied!`
+                );
+            }
+        );
+    });
+
+
+/* =========================================================
+   COPY ALL
+   ========================================================= */
+
+document
+    .getElementById("copyAllBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            const output =
+                FORMAT_ORDER
+                    .map(
+                        format =>
+                            `${format}: <t:${state.unixSeconds}:${format}>`
+                    )
+                    .join("\n");
+
+
+            copyText(
+                output,
+                "All Discord formats copied!"
+            );
+        }
+    );
+
+
+/* =========================================================
+   TECHNICAL COPY BUTTONS
+   ========================================================= */
+
+document
+    .querySelectorAll("[data-copy-id]")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const id =
+                    button.dataset.copyId;
+
+
+                const target =
+                    document.getElementById(
+                        id
+                    );
+
+
+                copyText(
+                    target.textContent,
+                    "Value copied!"
+                );
+            }
+        );
+    });
+
+
+/* =========================================================
+   BATCH GENERATOR
+   ========================================================= */
+
+document
+    .getElementById("batchBtn")
+    .addEventListener(
+        "click",
+        generateBatch
+    );
+
+
+function parseBatchLine(line) {
+
+    const trimmed =
+        line.trim();
+
+
+    if (!trimmed) {
+        return null;
+    }
+
+
+    /*
+       Numeric input = Unix.
+    */
+
+    if (
+        /^-?\d+$/.test(trimmed)
+    ) {
+
+        return parseUnix(
+            trimmed
+        );
+    }
+
+
+    /*
+       Otherwise try a normal ISO/browser date.
+    */
+
+    const date =
+        new Date(trimmed);
+
+
+    if (!isValidDate(date)) {
+
+        throw new Error(
+            `Invalid date: ${trimmed}`
+        );
+    }
+
+
+    return Math.floor(
+        date.getTime() / 1000
+    );
+}
+
+
+function generateBatch() {
+
+    const raw =
+        document
+            .getElementById("batchInput")
+            .value;
+
+
+    const output =
+        document
+            .getElementById("batchOutput");
+
+
+    output.innerHTML = "";
+
+
+    const lines =
+        raw
+            .split(/\r?\n/)
+            .map(line => line.trim())
+            .filter(Boolean);
+
+
+    if (!lines.length) {
+
+        showToast(
+            "Enter at least one date.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    let valid =
+        0;
+
+
+    lines.forEach(
+        (line, index) => {
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+
+            row.className =
+                "batch-row";
+
+
+            try {
+
+                const unix =
+                    parseBatchLine(line);
+
+
+                const code =
+                    `<t:${unix}:F>`;
+
+
+                row.innerHTML = `
+                    <code></code>
+                    <button class="btn small">
+                        Copy
+                    </button>
+                `;
+
+
+                row
+                    .querySelector("code")
+                    .textContent =
+                    code;
+
+
+                row
+                    .querySelector("button")
+                    .addEventListener(
+                        "click",
+                        () => {
+
+                            copyText(
+                                code,
+                                "Batch timestamp copied!"
+                            );
+                        }
+                    );
+
+
+                valid++;
+
+            } catch (error) {
+
+                row.innerHTML = `
+                    <code style="color:#ff8585"></code>
+                `;
+
+
+                row
+                    .querySelector("code")
+                    .textContent =
+                    `Line ${index + 1}: ${error.message}`;
+            }
+
+
+            output.appendChild(
+                row
+            );
+        }
+    );
+
+
+    showToast(
+        `${valid}/${lines.length} timestamps generated.`,
+        valid > 0
+            ? "success"
+            : "error"
+    );
+}
+
+
+/* =========================================================
+   RELATIVE LIVE UPDATE
+   ========================================================= */
+
+setInterval(
+    () => {
+
+        if (
+            el.liveRelative.checked &&
+            state.format === "R"
+        ) {
+
+            el.preview.textContent =
+                formatRelative(
+                    state.unixSeconds
+                );
+
+
+            document
+                .getElementById(
+                    "display-R"
+                )
+                .textContent =
+                formatRelative(
+                    state.unixSeconds
+                );
+        }
+
+    },
+    1000
+);
+
+
+/* =========================================================
+   KEYBOARD SHORTCUTS
+   ========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        /*
+           Ctrl + Enter
+           Copy current Discord tag.
+        */
+
+        if (
+            (event.ctrlKey ||
+             event.metaKey) &&
+            event.key === "Enter"
+        ) {
+
+            event.preventDefault();
+
+            copyText(
+                el.mainCode.textContent,
+                "Discord timestamp copied!"
+            );
+        }
+
+
+        /*
+           Ctrl + Shift + C
+           Copy every style.
+        */
+
+        if (
+            (event.ctrlKey ||
+             event.metaKey) &&
+            event.shiftKey &&
+            event.key.toLowerCase() === "c"
+        ) {
+
+            event.preventDefault();
+
+
+            const output =
+                FORMAT_ORDER
+                    .map(
+                        format =>
+                            `<t:${state.unixSeconds}:${format}>`
+                    )
+                    .join("\n");
+
+
+            copyText(
+                output,
+                "All timestamp formats copied!"
+            );
+        }
+    }
+);
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+function showToast(
+    message,
+    type = "success"
+) {
+
+    const toast =
+        document.createElement(
+            "div"
+        );
+
+
+    toast.className =
+        `toast ${type}`;
+
+
+    toast.textContent =
+        message;
+
+
+    el.toast.appendChild(
+        toast
+    );
+
+
+    setTimeout(
+        () => {
+
+            toast.style.opacity =
+                "0";
+
+            toast.style.transform =
+                "translateY(8px)";
+
+
+            setTimeout(
+                () => {
+                    toast.remove();
+                },
+                200
+            );
+
+        },
+        2500
+    );
+}
+
+
+/* =========================================================
+   INITIALIZATION
+   ========================================================= */
+
+function initialize() {
+
+    /*
+       Get the current Unix timestamp FIRST.
+    */
+
+    const now =
+        Math.floor(
+            Date.now() / 1000
+        );
+
+
+    /*
+       Set default options.
+    */
+
+    state.unixSeconds =
+        now;
+
+    state.format =
+        "F";
+
+    state.mode =
+        "date";
+
+
+    el.style.value =
+        "F";
+
+
+    el.timezone.value =
+        "local";
+
+
+    /*
+       Put the timestamp into all fields.
+    */
+
+    loadDateFieldsFromUnix(
+        now
+    );
+
+
+    el.unix.value =
+        String(now);
+
+
+    /*
+       Ensure the correct panel is visible.
+    */
+
+    el.datePanel.hidden =
+        false;
+
+    el.unixPanel.hidden =
+        true;
+
+
+    document
+        .querySelectorAll(".tab")
+        .forEach(tab => {
+
+            tab.classList.toggle(
+                "active",
+                tab.dataset.mode === "date"
+            );
+        });
+
+
+    /*
+       Render the entire application.
+    */
+
+    render();
+}
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+initialize();
+
+</script>
+
+</body>
+</html>
 ```
